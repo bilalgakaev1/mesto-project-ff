@@ -22,7 +22,7 @@ function createCard (array) {
     return cardItem;
 }
 
-function AddDom (card) {
+function addDom (card) {
     placesList.append(card);
 }
 
