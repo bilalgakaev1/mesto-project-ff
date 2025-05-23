@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "/scripts/index.js",
   "scripts": {
-    "build": "rm -rf dist && webpack",
+    "build": "webpack --mode production",
     "dev": "webpack serve --open"
   },
   "repository": {
