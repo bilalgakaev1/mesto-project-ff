@@ -7,15 +7,12 @@
   position: relative;
   box-sizing: border-box;
   padding: 34px 36px;
-  margin: auto; /**/
-  margin-top: 100px; /**/
 }
 
 @media screen and (max-width: 568px) {
   .popup__content {
     width: 100%;
     max-width: calc(100% - 80px);
-    margin-top: 40px;
     padding: 30px 20px;
   }
 }
