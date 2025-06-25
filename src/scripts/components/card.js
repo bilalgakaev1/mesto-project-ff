@@ -1,57 +1,21 @@
-const cardTemplate = document.querySelector('#card-template').content;
+import { deleteCardApi } from "./api";
+import { deleteLike } from "./api";
+import { addLike } from "./api";
 
+const cardTemplate = document.querySelector('#card-template').content;
 
 export function deleteCard (idCardForDelete, сardForDelete) {
   сardForDelete.remove()
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-41/cards/${idCardForDelete}`, {
-    method: "DELETE",
-    headers: {
-      authorization: "38b02706-48f5-4d2c-a034-55c008e4c9a7"
-    }
-  })
-  .then((res) => {
-    if (res.ok) {
-      console.log('Карточка удалена');
-    } else {
-      Promise.reject(`Ошибка: ${res.status}`);
-    }
-  })
-  .catch((err) => {console.log(err)});
+  deleteCardApi(idCardForDelete);
 }
 
 export function cardLike (item, cardId, count) {
   if (item.classList.contains('card__like-button_is-active')) {
-    fetch(`https://nomoreparties.co/v1/wff-cohort-41/cards/likes/${cardId} `, {
-      method: "DELETE",
-      headers: {
-        authorization: "38b02706-48f5-4d2c-a034-55c008e4c9a7"
-      }
-    })
-    .then((res) => {
-      if (res.ok) {
-        console.log('Dont Liked');
-      } else {
-        Promise.reject(`Ошибка: ${res.status}`);
-      }
-    })
-    .catch((err) => {console.log(err)});
+    deleteLike(cardId)
     item.classList.remove('card__like-button_is-active');
     count.textContent = Number(count.textContent) - 1;
   } else {
-    fetch(`https://nomoreparties.co/v1/wff-cohort-41/cards/likes/${cardId} `, {
-      method: "PUT",
-      headers: {
-        authorization: "38b02706-48f5-4d2c-a034-55c008e4c9a7"
-      }
-    })
-    .then((res) => {
-      if (res.ok) {
-        console.log('Liked');
-      } else {
-        Promise.reject(`Ошибка: ${res.status}`);
-      }
-    })
-    .catch((err) => {console.log(err)});
+    addLike(cardId)
     item.classList.add('card__like-button_is-active');
     count.textContent = Number(count.textContent) + 1;
   }

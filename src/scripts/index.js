@@ -1,6 +1,5 @@
 import '../pages/index.css'
 import { closePopup, openPopup } from "./components/modal.js";
-import { initialCards } from './components/cards.js';
 import { createCard } from './components/card.js';
 import { cardLike } from "./components/card.js";
 import { deleteCard } from "./components/card.js";
@@ -10,6 +9,7 @@ import { getUsers } from './components/api.js';
 import { addCard } from './components/api.js';
 import { updateAvatar } from './components/api.js';
 import { updateProfil } from './components/api.js';
+import { deleteCardApi } from './components/api.js';
 
 const placesList = document.querySelector('.places__list');
 const popupAdd = document.querySelector('.popup_type_new-card');
@@ -31,13 +31,7 @@ const popupAvatar = document.querySelector('.popup_type_new-avatar');
 const formAvatar = document.querySelector('form[name="new-avatar"]');
 const avatarInput = formAvatar.querySelector('.popup__input_type_url');
 const imageContainer = document.querySelector('.profile__image-container')
-
-
-
-const popup = document.querySelectorAll('.popup');
-
 const popupEdit = document.querySelector('.popup_type_edit');
-const content = document.querySelector('.content');
 const popupLink = document.querySelector('.popup__image');
 const popupCaption = document.querySelector('.popup__caption');
 
@@ -93,15 +87,7 @@ imageContainer.addEventListener('click', function() {
 })
 formDelete.addEventListener('submit', function(evt) {
   evt.preventDefault()
-  const submitButton = evt.submitter || evt.target.querySelector('.popup__button')
-  const originalText = submitButton.textContent;
-  submitButton.textContent = 'Удаление...';
-  submitButton.disabled = true;
   deleteCard(idCardForDelete, сardForDelete)
-  .finally(() => {
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
-  })
   closePopup(popupDelete);
 });
 formEdit.addEventListener('submit', handleFormSubmitEdit);
@@ -143,7 +129,7 @@ Promise.all([getUsers(), getCards()])
     cardData.forEach(cardInfo => {
       let isLiked = cardInfo.likes.some(user => user._id === userData._id);
       placesList.prepend(createCard(cardInfo, handleImageClick, cardLike, handleDeleteClick, null, null, cardInfo.likes.length, cardInfo._id, isLiked));
-      if (cardInfo.owner._id !== "05ed510d7218804f847442a7") {
+      if (cardInfo.owner._id !== userData._id) {
         document.querySelector('.card__delete-button').style.display = 'none';
       }
     });
