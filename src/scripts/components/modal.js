@@ -9,7 +9,7 @@ export function closePopup (popup) {
         document.removeEventListener('keydown', closePopupKeyboard);
 }
 
-export function closeButton (popup) {
+export function setEventListenerCloseOnButton (popup) {
     const popupClose = popup.querySelector('.popup__close');
     popupClose.addEventListener('click', () => {
         closePopup(popup)

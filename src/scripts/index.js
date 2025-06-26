@@ -1,15 +1,8 @@
 import '../pages/index.css'
-import { closePopup, openPopup } from "./components/modal.js";
-import { createCard } from './components/card.js';
-import { cardLike } from "./components/card.js";
-import { deleteCard } from "./components/card.js";
+import { closePopup, openPopup, setEventListenerCloseOnButton } from "./components/modal.js";
+import { createCard, deleteCard, cardLike } from './components/card.js';
 import { hideInputError } from "./components/validation.js";
-import { getCards } from './components/api.js';
-import { getUsers } from './components/api.js';
-import { addCard } from './components/api.js';
-import { updateAvatar } from './components/api.js';
-import { updateProfil } from './components/api.js';
-import { closeButton } from './components/modal.js';
+import { deleteCardApi, getCards, getUsers, addCard, updateAvatar, updateProfil } from './components/api.js';
 
 const placesList = document.querySelector('.places__list');
 const popupAdd = document.querySelector('.popup_type_new-card');
@@ -34,6 +27,12 @@ const imageContainer = document.querySelector('.profile__image-container')
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupLink = document.querySelector('.popup__image');
 const popupCaption = document.querySelector('.popup__caption');
+
+setEventListenerCloseOnButton(popupImage);
+setEventListenerCloseOnButton(popupAvatar);
+setEventListenerCloseOnButton(popupAdd);
+setEventListenerCloseOnButton(popupEdit);
+setEventListenerCloseOnButton(popupDelete)
 
 function handleFormSubmitEdit(evt) { 
     evt.preventDefault();
@@ -62,7 +61,6 @@ function handleImageClick (name, link) {
   popupCaption.alt = name;
   popupCaption.textContent = name;
   openPopup(popupImage);
-  closeButton(popupImage);
 }
 
 formAvatar.addEventListener('submit', function(evt) {
@@ -84,14 +82,14 @@ formAvatar.addEventListener('submit', function(evt) {
 })
 imageContainer.addEventListener('click', function() {
   openPopup(popupAvatar);
-  closeButton(popupAvatar);
   formAvatar.reset()
 })
 formDelete.addEventListener('submit', function(evt) {
   evt.preventDefault()
-  deleteCard(idCardForDelete, сardForDelete)
+  deleteCardApi(idCardForDelete)
   .then((res) => {
         if (res.ok) {
+          deleteCard(сardForDelete)
           console.log('Карточка удалена');
           closePopup(popupDelete);
         } else {
@@ -123,7 +121,6 @@ addButton.addEventListener('click', function () {
   formCard.elements['place-name'].value = ''; 
   formCard.elements.link.value = '';
   openPopup(popupAdd);
-  closeButton(popupAdd);
   hideInputError(formCard, cardInputName)
   hideInputError(formCard, cardInputLink)
 });
@@ -131,7 +128,6 @@ editButton.addEventListener('click', function () {
   nameInput.value = userName.textContent;
   jobInput.value = userDescription.textContent;
   openPopup(popupEdit);
-  closeButton(popupEdit);
   hideInputError(formEdit, nameInput)
   hideInputError(formEdit, jobInput)
 })

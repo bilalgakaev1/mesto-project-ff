@@ -5,9 +5,8 @@ import { getCards } from "./api";
 
 const cardTemplate = document.querySelector('#card-template').content;
 
-export function deleteCard (idCardForDelete, сardForDelete) {
-   deleteCardApi(idCardForDelete).then(() => {сardForDelete.remove()})
-   return deleteCardApi(idCardForDelete)
+export function deleteCard (сardForDelete) {
+   сardForDelete.remove();
 }
 
 export function cardLike (item, cardId, count) {
