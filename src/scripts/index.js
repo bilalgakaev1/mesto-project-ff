@@ -9,7 +9,7 @@ import { getUsers } from './components/api.js';
 import { addCard } from './components/api.js';
 import { updateAvatar } from './components/api.js';
 import { updateProfil } from './components/api.js';
-import { deleteCardApi } from './components/api.js';
+import { closeButton } from './components/modal.js';
 
 const placesList = document.querySelector('.places__list');
 const popupAdd = document.querySelector('.popup_type_new-card');
@@ -38,19 +38,18 @@ const popupCaption = document.querySelector('.popup__caption');
 function handleFormSubmitEdit(evt) { 
     evt.preventDefault();
 
-    nameInput.textContent = nameInput.value;
-    jobInput.textContent = jobInput.value;
-
-    userName.textContent = nameInput.textContent;
-    userDescription.textContent = jobInput.textContent;
     const submitButton = evt.submitter || evt.target.querySelector('.popup__button')
     const originalText = submitButton.textContent;
     submitButton.textContent = 'Сохранение...';
     submitButton.disabled = true;
-    closePopup(popupEdit);
+    
     updateProfil(userName, userDescription)
-    .then((res) => { return res.json()})
-    .then((res) => {console.log(res)})
+    .then((res) => {
+      console.log('Данные профиля успешно обновлены!');
+      userName.textContent = nameInput.value;
+      userDescription.textContent = jobInput.value;
+      closePopup(popupEdit);
+    })
     .catch((err) => {console.log(err.status)})
     .finally(() => {
       submitButton.textContent = originalText;
@@ -62,7 +61,8 @@ function handleImageClick (name, link) {
   popupLink.src = link;
   popupCaption.alt = name;
   popupCaption.textContent = name;
-  openPopup(popupImage)
+  openPopup(popupImage);
+  closeButton(popupImage);
 }
 
 formAvatar.addEventListener('submit', function(evt) {
@@ -72,23 +72,33 @@ formAvatar.addEventListener('submit', function(evt) {
   submitButton.textContent = 'Сохранение...';
   submitButton.disabled = true;
   updateAvatar(avatarInput)
+  .then(() => {
+    userImage.style.backgroundImage = `url(${avatarInput.value})`;
+    closePopup(popupAvatar)
+    console.log('Аватар обновлен')
+  })
   .finally(() => {
     submitButton.textContent = originalText;
     submitButton.disabled = false;
   })
-  userImage.style.backgroundImage = `url(${avatarInput.value})`;
-  closePopup(popupAvatar)
-
-  
 })
 imageContainer.addEventListener('click', function() {
   openPopup(popupAvatar);
+  closeButton(popupAvatar);
   formAvatar.reset()
 })
 formDelete.addEventListener('submit', function(evt) {
   evt.preventDefault()
   deleteCard(idCardForDelete, сardForDelete)
-  closePopup(popupDelete);
+  .then((res) => {
+        if (res.ok) {
+          console.log('Карточка удалена');
+          closePopup(popupDelete);
+        } else {
+          Promise.reject(`Ошибка: ${res.status}`);
+        }
+      })
+      .catch((err) => {console.log(err)});
 });
 formEdit.addEventListener('submit', handleFormSubmitEdit);
 formCard.addEventListener('submit', function (evt) {
@@ -100,18 +110,20 @@ formCard.addEventListener('submit', function (evt) {
   addCard(cardInputName , cardInputLink)
   .then((res) => {return res.json()})
     .then((data) => {
-      placesList.prepend(createCard(null, handleImageClick, cardLike, handleDeleteClick, cardInputName, cardInputLink, data.likes.length, data._id))})
+      closePopup(popupAdd);
+      placesList.prepend(createCard(data, handleImageClick, cardLike, handleDeleteClick, data.likes.length, data._id, userId, data.owner._id))
+    })
   .finally(() => {
     submitButton.textContent = originalText;
     submitButton.disabled = false;
   })
-  .catch((err) => {console.log(err.status)})
-  closePopup(popupAdd);
-});
+  .catch((err) => {console.log(err.status + ' Не удалось добавить карточку')})
+}) 
 addButton.addEventListener('click', function () {
   formCard.elements['place-name'].value = ''; 
   formCard.elements.link.value = '';
   openPopup(popupAdd);
+  closeButton(popupAdd);
   hideInputError(formCard, cardInputName)
   hideInputError(formCard, cardInputLink)
 });
@@ -119,25 +131,26 @@ editButton.addEventListener('click', function () {
   nameInput.value = userName.textContent;
   jobInput.value = userDescription.textContent;
   openPopup(popupEdit);
+  closeButton(popupEdit);
   hideInputError(formEdit, nameInput)
   hideInputError(formEdit, jobInput)
 })
 
+let userId;
+
 Promise.all([getUsers(), getCards()])
   
   .then(([userData, cardData]) => {
+    userId = userData._id;
     cardData.forEach(cardInfo => {
-      let isLiked = cardInfo.likes.some(user => user._id === userData._id);
-      placesList.prepend(createCard(cardInfo, handleImageClick, cardLike, handleDeleteClick, null, null, cardInfo.likes.length, cardInfo._id, isLiked));
-      if (cardInfo.owner._id !== userData._id) {
-        document.querySelector('.card__delete-button').style.display = 'none';
-      }
+      placesList.prepend(createCard(cardInfo, handleImageClick, cardLike, handleDeleteClick, cardInfo.likes.length, cardInfo._id, userId, cardInfo.owner._id));
     });
     
     userName.textContent = userData.name;
     userDescription.textContent = userData.about;
     userImage.style.backgroundImage = `url('${userData.avatar}')`;
-  });
+  })
+  .catch((err) => {console.log(err.status)})
 
   let idCardForDelete;
   let сardForDelete;

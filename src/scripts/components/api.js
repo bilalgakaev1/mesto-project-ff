@@ -86,7 +86,6 @@ export function getCards() {
         link: `${link.value}`
       })
     })
-    
   }
 
   export function deleteCardApi (idCard) {
@@ -94,14 +93,7 @@ export function getCards() {
       method: "DELETE",
       headers: config.headers
     })
-    .then((res) => {
-      if (res.ok) {
-        console.log('Карточка удалена');
-      } else {
-        Promise.reject(`Ошибка: ${res.status}`);
-      }
-    })
-    .catch((err) => {console.log(err)});
+    
   }
 
 export function deleteLike(cardId) {
@@ -120,7 +112,7 @@ export function deleteLike(cardId) {
 }
 
 export function addLike(cardId) {
-  fetch(`${config.baseUrl}/cards/likes/${cardId} `, {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId} `, {
         method: "PUT",
         headers: config.headers
       })
