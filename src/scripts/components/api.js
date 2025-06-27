@@ -68,6 +68,7 @@ export function getCards() {
     })
     .then(res => {
       if (res.ok) {
+        console.log('Данные профиля успешно обновлены!');
         return res.json();
       }
       return Promise.reject(`Ошибка: ${res.status}`);
@@ -86,6 +87,8 @@ export function getCards() {
         link: `${link.value}`
       })
     })
+    .then((res) => {return res.json()})
+    .catch((err) => {console.log(err.status + ' Не удалось добавить карточку')})
   }
 
   export function deleteCardApi (idCard) {
@@ -93,7 +96,16 @@ export function getCards() {
       method: "DELETE",
       headers: config.headers
     })
-    
+    .then((res) => {
+            if (res.ok) {
+              
+              console.log('Карточка удалена');
+              
+            } else {
+              Promise.reject(`Ошибка: ${res.status}`);
+            }
+          })
+          .catch((err) => {console.log(err)});
   }
 
 export function deleteLike(cardId) {

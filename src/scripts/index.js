@@ -44,12 +44,10 @@ function handleFormSubmitEdit(evt) {
     
     updateProfil(userName, userDescription)
     .then((res) => {
-      console.log('Данные профиля успешно обновлены!');
       userName.textContent = nameInput.value;
       userDescription.textContent = jobInput.value;
       closePopup(popupEdit);
     })
-    .catch((err) => {console.log(err.status)})
     .finally(() => {
       submitButton.textContent = originalText;
       submitButton.disabled = false;
@@ -87,16 +85,11 @@ imageContainer.addEventListener('click', function() {
 formDelete.addEventListener('submit', function(evt) {
   evt.preventDefault()
   deleteCardApi(idCardForDelete)
-  .then((res) => {
-        if (res.ok) {
-          deleteCard(сardForDelete)
-          console.log('Карточка удалена');
-          closePopup(popupDelete);
-        } else {
-          Promise.reject(`Ошибка: ${res.status}`);
-        }
-      })
-      .catch((err) => {console.log(err)});
+  .then(() => {
+    deleteCard(сardForDelete)
+    closePopup(popupDelete);
+  })
+  
 });
 formEdit.addEventListener('submit', handleFormSubmitEdit);
 formCard.addEventListener('submit', function (evt) {
@@ -106,7 +99,6 @@ formCard.addEventListener('submit', function (evt) {
   submitButton.textContent = 'Сохранение...';
   submitButton.disabled = true;
   addCard(cardInputName , cardInputLink)
-  .then((res) => {return res.json()})
     .then((data) => {
       closePopup(popupAdd);
       placesList.prepend(createCard(data, handleImageClick, cardLike, handleDeleteClick, data.likes.length, data._id, userId, data.owner._id))
@@ -115,7 +107,7 @@ formCard.addEventListener('submit', function (evt) {
     submitButton.textContent = originalText;
     submitButton.disabled = false;
   })
-  .catch((err) => {console.log(err.status + ' Не удалось добавить карточку')})
+  
 }) 
 addButton.addEventListener('click', function () {
   formCard.elements['place-name'].value = ''; 
