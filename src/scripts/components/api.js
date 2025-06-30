@@ -87,8 +87,16 @@ export function getCards() {
         link: `${link.value}`
       })
     })
-    .then((res) => {return res.json()})
-    .catch((err) => {console.log(err.status + ' Не удалось добавить карточку')})
+    .then(res => {
+      if (res.ok) {
+        console.log('Вы добавили карточку!');
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log(err); 
+    }); 
   }
 
   export function deleteCardApi (idCard) {
