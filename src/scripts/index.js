@@ -43,11 +43,12 @@ function handleFormSubmitEdit(evt) {
     submitButton.disabled = true;
     
     updateProfil(userName, userDescription)
-    .then((res) => {
+    .then(() => {
       userName.textContent = nameInput.value;
       userDescription.textContent = jobInput.value;
       closePopup(popupEdit);
     })
+    .catch((err) => {console.log(err.status)})
     .finally(() => {
       submitButton.textContent = originalText;
       submitButton.disabled = false;
@@ -73,6 +74,7 @@ formAvatar.addEventListener('submit', function(evt) {
     closePopup(popupAvatar)
     console.log('Аватар обновлен')
   })
+  .catch((err) => {console.log(err.status)})
   .finally(() => {
     submitButton.textContent = originalText;
     submitButton.disabled = false;
@@ -89,7 +91,7 @@ formDelete.addEventListener('submit', function(evt) {
     deleteCard(сardForDelete)
     closePopup(popupDelete);
   })
-  
+  .catch((err) => {console.log(err.status)})
 });
 formEdit.addEventListener('submit', handleFormSubmitEdit);
 formCard.addEventListener('submit', function (evt) {
@@ -103,6 +105,7 @@ formCard.addEventListener('submit', function (evt) {
       closePopup(popupAdd);
       placesList.prepend(createCard(data, handleImageClick, cardLike, handleDeleteClick, data.likes.length, data._id, userId, data.owner._id))
     })
+    .catch((err) => {console.log(err.status)})
   .finally(() => {
     submitButton.textContent = originalText;
     submitButton.disabled = false;
